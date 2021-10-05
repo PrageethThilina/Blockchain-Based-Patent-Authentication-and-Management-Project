@@ -1,0 +1,34 @@
+Contracts  - Include Smart Contracts / Solidity Files
+Migrations - Include Migrations / How you deploy your Contracts
+Test       - Test Your Contracts
+
+
+
+
+Truffle Commands:
+
+  init      Initialize new and empty Ethereum project
+  build     Execute build pipeline (if configuration present)
+  compile   Compile contract source files
+  create    Helper to create new contracts, migrations and tests
+  develop   Open a console with a local development blockchain
+  migrate   Run migrations to deploy contracts
+  
+  config    Set user-level configuration options
+  console   Run a console with contract abstractions and commands available
+  db        Database interface commands
+  debug     Interactively debug any transaction on the blockchain
+  deploy    (alias for migrate)
+  exec      Execute a JS module within this Truffle environment
+  help      List all commands or provide information about a specific command
+  install   Install a package from the Ethereum Package Registry
+  networks  Show addresses for deployed contracts on each network
+  obtain    Fetch and cache a specified compiler
+  opcode    Print the compiled opcodes for a given contract
+  preserve  Save data to decentralized storage platforms like IPFS and Filecoin
+  publish   Publish a package to the Ethereum Package Registry
+  run       Run a third-party command
+  test      Run JavaScript and Solidity tests
+  unbox     Download a Truffle Box, a pre-built Truffle project
+  version   Show version number and exit
+  watch     Watch filesystem for changes and rebuild the project automatically
