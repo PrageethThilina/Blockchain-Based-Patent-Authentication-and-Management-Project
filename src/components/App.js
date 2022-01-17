@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import Web3 from 'web3'
+import Web3 from 'web3';
+import Navbar from './Navbar';
+import Main from './Main';
 import './App.css';
-import Patent from '../abis/Patent.json'
+import Patent from '../abis/Patent.json';
 
 class App extends Component {
 
@@ -38,12 +40,14 @@ class App extends Component {
       const patent = web3.eth.Contract(Patent.abi, networkData.address)
       this.setState({ patent })
       const patentCount = await patent.methods.patentCount().call()
-      console.log(patentCount.toString())
       this.setState({ patentCount })
-      // Load products
+      // Load patents
       for (var i = 1; i <= patentCount; i++) {
+        const invention_detail = await patent.methods.inventiondetails(i).call()
         const patent_detail = await patent.methods.patentdetails(i).call()
+
         this.setState({
+          inventiondetails: [...this.state.inventiondetails, invention_detail],
           patentdetails: [...this.state.patentdetails, patent_detail]
         })
       }
@@ -59,17 +63,17 @@ class App extends Component {
     this.state = {
       account: '',
       patentCount: 0,
+      inventiondetails: [],
       patentdetails: [],
       loading: true
     }
-
     this.registerPatent = this.registerPatent.bind(this)
 
   }
 
-  registerPatent(invention_title, inventor_details, patent_claims, invention_description, registereddate, expdate) {
+  registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, patent_claims, invention_description, registereddate, expdate) {
     this.setState({ loading: true })
-    this.state.patent.methods.registerPatent(invention_title, inventor_details, patent_claims, invention_description, registereddate, expdate).send({ from: this.state.account })
+    this.state.patent.methods.registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, patent_claims, invention_description, registereddate, expdate).send({ from: this.state.account, gas: 4712388, gasPrice: 100000000000 })
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
     })
@@ -85,7 +89,8 @@ class App extends Component {
               {this.state.loading
                 ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
                 : <Main 
-                patent_details={this.state.patentdetails}
+                inventiondetails={this.state.inventiondetails}
+                patentdetails={this.state.patentdetails}
                 registerPatent={this.registerPatent} />
               }
             </main>

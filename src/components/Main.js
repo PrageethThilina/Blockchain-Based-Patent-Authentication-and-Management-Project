@@ -11,10 +11,13 @@ class Main extends Component {
                     const invention_title = this.inventionTitle.value
                     const inventor_details = this.inventorDetails.value
                     const patent_claims = this.patentClaims.value
+                    const technical_problem = this.technicalProblem.value
+                    const technical_solution = this.technicalSolution.value
+                    const technical_field = this.technicalField.value
                     const invention_description = this.inventionDescription.value
-                    const registereddate = this.registeredDate.value
-                    const expdate = this.expDate.value
-                    this.props.registerPatent(invention_title, inventor_details, patent_claims, invention_description, registereddate, expdate)
+                    const registered_date = this.registeredDate.value
+                    const exp_date = this.expDate.value
+                    this.props.registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, patent_claims, invention_description, registered_date, exp_date)
                 }}>
                     <div className="form-group mr-sm-2">
                         <input
@@ -41,6 +44,33 @@ class Main extends Component {
                             ref={(input) => { this.patentClaims = input }}
                             className="form-control"
                             placeholder="Patent Claims"
+                            required />
+                    </div>
+                    <div className="form-group mr-sm-2">
+                        <input
+                            id="technicalProblem"
+                            type="text"
+                            ref={(input) => { this.technicalProblem = input }}
+                            className="form-control"
+                            placeholder="Technical Problem"
+                            required />
+                    </div>
+                    <div className="form-group mr-sm-2">
+                        <input
+                            id="technicalSolution"
+                            type="text"
+                            ref={(input) => { this.technicalSolution = input }}
+                            className="form-control"
+                            placeholder="Technical Solution"
+                            required />
+                    </div>
+                    <div className="form-group mr-sm-2">
+                        <input
+                            id="technicalField"
+                            type="text"
+                            ref={(input) => { this.technicalField = input }}
+                            className="form-control"
+                            placeholder="Technical Field"
                             required />
                     </div>
                     <div className="form-group mr-sm-2">
@@ -88,7 +118,7 @@ class Main extends Component {
                         </tr>
                     </thead>
                     <tbody id="patentList">
-                        {this.props.patent_details.map((patent_detail, key) => {
+                        {this.props.patentdetails.map((patent_detail, key) => {
                             return (
                                 <tr key={key}>
                                     <th scope="row">{patent_detail.patent_id.toString()}</th>
