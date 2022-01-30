@@ -2,138 +2,188 @@ import React, { Component } from 'react';
 
 class Main extends Component {
 
+    async componentWillMount() {
+        await this.loadRegisteredPatents()
+    }
+
+    async loadRegisteredPatents() {
+        if (this.props.patentcount === '0') {
+           
+            this.setState({
+                showResults: false
+            });
+        }
+        else
+        {
+            this.setState({
+                showResults: true
+            });
+        }
+    }
+
+    state = {
+        showResults: false
+    };
+
     render() {
+
+        const tblStyle = {
+            display: 'block',
+            overflowX: 'auto',
+            overflowY: 'auto',
+            whitespace: 'nowrap',
+        }
+
         return (
             <div id="content">
-                <h1>Patent Application</h1>
-                <form onSubmit={(event) => {
-                    event.preventDefault()
-                    const invention_title = this.inventionTitle.value
-                    const inventor_details = this.inventorDetails.value
-                    const patent_claims = this.patentClaims.value
-                    const technical_problem = this.technicalProblem.value
-                    const technical_solution = this.technicalSolution.value
-                    const technical_field = this.technicalField.value
-                    const invention_description = this.inventionDescription.value
-                    const registered_date = this.registeredDate.value
-                    const exp_date = this.expDate.value
-                    this.props.registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, patent_claims, invention_description, registered_date, exp_date)
-                }}>
-                    <div className="form-group mr-sm-2">
-                        <input
-                            id="inventionTitle"
-                            type="text"
-                            ref={(input) => { this.inventionTitle = input }}
-                            className="form-control"
-                            placeholder="Invention Title"
-                            required />
+                <div className="container">
+                    <div className="row">
+                        <div className="col-md-12 card" style={{ padding: '10px' }}>
+                            <h4 className="text-center">Patent Application</h4>
+                            <form onSubmit={(event) => {
+                                const current = new Date();
+                                const date = `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`;
+                                // const enddate = `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()+20}`;
+                                event.preventDefault()
+                                const invention_title = this.inventionTitle.value
+                                const inventor_details = this.inventorDetails.value
+                                const patent_claims = this.patentClaims.value
+                                const technical_problem = this.technicalProblem.value
+                                const technical_solution = this.technicalSolution.value
+                                const technical_field = this.technicalField.value
+                                const invention_description = this.inventionDescription.value
+                                const registered_date = date
+                                const end_date = "Pending"
+                                const license_details = "No"
+                                const renewal_status = "Pending"
+                                const patent_status = "Pending Approval"
+
+                                this.props.registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, patent_claims, invention_description, registered_date, end_date, license_details, renewal_status, patent_status)
+                            }}>
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <div className="form-group mr-sm-2">
+                                            <label>Invention Title <span style={{ color: 'red' }}>*</span></label>
+                                            <input
+                                                id="inventionTitle"
+                                                type="text"
+                                                ref={(input) => { this.inventionTitle = input }}
+                                                className="form-control"
+                                                required />
+                                        </div>
+                                        <div className="form-group mr-sm-2">
+                                            <label>Inventor Details <span style={{ color: 'red' }}>*</span></label>
+                                            <input
+                                                id="inventorDetails"
+                                                type="text"
+                                                ref={(input) => { this.inventorDetails = input }}
+                                                className="form-control"
+                                                required />
+                                        </div>
+                                        <div className="form-group mr-sm-2">
+                                            <label>Patent Claims <span style={{ color: 'red' }}>*</span></label>
+                                            <input
+                                                id="patentClaims"
+                                                type="text"
+                                                ref={(input) => { this.patentClaims = input }}
+                                                className="form-control"
+                                                required />
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className="form-group mr-sm-2">
+                                            <label>Technical Problem <span style={{ color: 'red' }}>*</span></label>
+                                            <input
+                                                id="technicalProblem"
+                                                type="text"
+                                                ref={(input) => { this.technicalProblem = input }}
+                                                className="form-control"
+                                                required />
+                                        </div>
+                                        <div className="form-group mr-sm-2">
+                                            <label>Technical Solution <span style={{ color: 'red' }}>*</span></label>
+                                            <input
+                                                id="technicalSolution"
+                                                type="text"
+                                                ref={(input) => { this.technicalSolution = input }}
+                                                className="form-control"
+                                                required />
+                                        </div>
+                                        <div className="form-group mr-sm-2">
+                                            <label>Technical Field <span style={{ color: 'red' }}>*</span></label>
+                                            <input
+                                                id="technicalField"
+                                                type="text"
+                                                ref={(input) => { this.technicalField = input }}
+                                                className="form-control"
+                                                required />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <div className="form-group mr-sm-2">
+                                            <label>Invention Description <span style={{ color: 'red' }}>*</span></label>
+                                            <input
+                                                id="inventionDescription"
+                                                type="text"
+                                                rows="3"
+                                                ref={(input) => { this.inventionDescription = input }}
+                                                className="form-control"
+                                                style={{ height: '60px' }}
+                                                required />
+                                        </div>
+                                        <button type="submit" className="btn btn-primary" style={{ marginLeft: '25%', width: '50%' }}>Submit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div className="form-group mr-sm-2">
-                        <input
-                            id="inventorDetails"
-                            type="text"
-                            ref={(input) => { this.inventorDetails = input }}
-                            className="form-control"
-                            placeholder="Inventor Details"
-                            required />
+                </div>
+
+                <div className="container-fluid"  style={{ display: this.state.showResults ? "block" : "none", marginTop: '30px' }}>
+                    <div className="row">
+                        <div className="col" id="registered_patents_div">
+                            <h4 className="text-center">Registered Patents</h4>
+                            <table className="table table-success table-striped table-bordered table-hover" style={tblStyle}>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Invention Title</th>
+                                        <th>Inventor Details</th>
+                                        <th>Inventor</th>
+                                        <th>Technical Field</th>
+                                        <th>Technical Problem</th>
+                                        <th>Technical Solution</th>
+                                        <th>Invention Description</th>
+                                        <th>Patent Claims</th>
+                                        <th>Register Date</th>
+                                        <th>Patent Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patentList">
+                                    {this.props.patentdataarr.map((i, key) => {
+                                        return (
+                                            <tr key={key}>
+                                                <th>{i.patent_id.toString()}</th>
+                                                <td>{i.invention_title}</td>
+                                                <td>{i.inventor_details}</td>
+                                                <td>{i.inventor}</td>
+                                                <td>{i.technical_field}</td>
+                                                <td>{i.technical_problem}</td>
+                                                <td>{i.technical_solution}</td>
+                                                <td>{i.patent_claims}</td>
+                                                <td>{i.invention_description}</td>
+                                                <td>{i.registered_date}</td>
+                                                <td>{i.patent_status}</td>
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div className="form-group mr-sm-2">
-                        <input
-                            id="patentClaims"
-                            type="text"
-                            ref={(input) => { this.patentClaims = input }}
-                            className="form-control"
-                            placeholder="Patent Claims"
-                            required />
-                    </div>
-                    <div className="form-group mr-sm-2">
-                        <input
-                            id="technicalProblem"
-                            type="text"
-                            ref={(input) => { this.technicalProblem = input }}
-                            className="form-control"
-                            placeholder="Technical Problem"
-                            required />
-                    </div>
-                    <div className="form-group mr-sm-2">
-                        <input
-                            id="technicalSolution"
-                            type="text"
-                            ref={(input) => { this.technicalSolution = input }}
-                            className="form-control"
-                            placeholder="Technical Solution"
-                            required />
-                    </div>
-                    <div className="form-group mr-sm-2">
-                        <input
-                            id="technicalField"
-                            type="text"
-                            ref={(input) => { this.technicalField = input }}
-                            className="form-control"
-                            placeholder="Technical Field"
-                            required />
-                    </div>
-                    <div className="form-group mr-sm-2">
-                        <input
-                            id="inventionDescription"
-                            type="text"
-                            ref={(input) => { this.inventionDescription = input }}
-                            className="form-control"
-                            placeholder="Invention Description"
-                            required />
-                    </div>
-                    <div className="form-group mr-sm-2">
-                        <input
-                            id="registeredDate"
-                            type="date"
-                            ref={(input) => { this.registeredDate = input }}
-                            className="form-control"
-                            placeholder="Registered Date"
-                            required />
-                    </div>
-                    <div className="form-group mr-sm-2">
-                        <input
-                            id="expDate"
-                            type="date"
-                            ref={(input) => { this.expDate = input }}
-                            className="form-control"
-                            placeholder="Expiry Date"
-                            required />
-                    </div>
-                    <button type="submit" className="btn btn-primary">Submit</button>
-                </form>
-                <p> </p>
-                <h2>Registered Patents</h2>
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Invention Title</th>
-                            <th scope="col">Inventor Details</th>
-                            <th scope="col">Inventor</th>
-                            <th scope="col">Patent Claims</th>
-                            <th scope="col">Invention Description</th>
-                            <th scope="col">Registered Date</th>
-                            <th scope="col">Expiry Date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="patentList">
-                        {this.props.patentdetails.map((patent_detail, key) => {
-                            return (
-                                <tr key={key}>
-                                    <th scope="row">{patent_detail.patent_id.toString()}</th>
-                                    <td>{patent_detail.invention_title}</td>
-                                    <td>{patent_detail.inventor_details}</td>
-                                    <td>{patent_detail.inventor}</td>
-                                    <td>{patent_detail.patent_claims}</td>
-                                    <td>{patent_detail.invention_description}</td>
-                                    <td>{patent_detail.registereddate}</td>
-                                    <td>{patent_detail.expdate}</td>
-                                </tr>
-                            )
-                        })}
-                    </tbody>
-                </table>
+                </div>
             </div>
         );
     }

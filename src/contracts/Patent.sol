@@ -27,10 +27,11 @@ contract Patent {
     struct PatentDetails{
         uint patent_id;
         string patent_claims;
-        string registereddate;
-        string expdate;
-        bool renewal_status;
-        bool patent_status;
+        string registered_date;
+        string end_date;
+        string license_details;
+        string renewal_status;
+        string patent_status;
     }
 
     // create and map to store this patent data on the blockchain, use an id as a key, and the value will be a Patent struct
@@ -51,32 +52,39 @@ contract Patent {
     event addPatentDetails(  
         uint patent_id,
         string patent_claims,
-        string registereddate,
-        string expdate,
-        bool renewal_status,
-        bool patent_status
+        string registered_date,
+        string end_date,
+        string license_details,
+        string renewal_status,
+        string patent_status
     );
 
     // Function for register a patent
-    function registerPatent(string memory _invention_title, string memory _inventor_details, string memory _technical_field, string memory _technical_problem, string memory _technical_solution, string memory _invention_description, string memory _patent_claims, string memory _registereddate, string memory _expdate) public {
+    function registerPatent(string memory _invention_title, string memory _inventor_details, string memory _technical_field, string memory _technical_problem, string memory _technical_solution, string memory _invention_description, string memory _patent_claims, string memory _registered_date, string memory _end_date, string memory _license_details, string memory _renewal_status, string memory _patent_status) public {
         // Require a valid  invention title
         require(bytes(_invention_title).length > 0, "Require a valid  invention title");
         // Require a valid  inventor details
         require(bytes(_inventor_details).length > 0, "Require a valid  inventor details");
         // Require a valid  technical field description
-        require(bytes(_invention_description).length > 0, "Require a valid  technical field description");
-        // Require a valid  patent claims
+        require(bytes(_technical_field).length > 0, "Require a valid  technical field description");
+        // Require a valid  Technical Problem Details
+        require(bytes(_technical_problem).length > 0, "Require a valid  patent claims");
+        // Require a valid  Technical solution details
+        require(bytes(_technical_solution).length > 0, "Require a valid  patent claims");
+        // Require a valid  invention description details
+        require(bytes(_invention_description).length > 0, "Require a valid  patent claims");
+        // Require patent claims
         require(bytes(_patent_claims).length > 0, "Require a valid  patent claims");
         // Increment product count
         patentCount ++;
         // Add Invention details
         inventiondetails[patentCount] = InventionDetails(patentCount, _invention_title, _inventor_details, msg.sender, _technical_field, _technical_problem, _technical_solution, _invention_description);
-        // Add Invention details
-        patentdetails[patentCount] = PatentDetails(patentCount, _patent_claims, _registereddate, _expdate, false, false);
+        // Add Patent details
+        patentdetails[patentCount] = PatentDetails(patentCount, _patent_claims, _registered_date, _end_date, _license_details, _renewal_status, _patent_status);
         // Trigger an event
         emit addInventionDetails(_invention_title, _inventor_details, msg.sender, _technical_field, _technical_problem, _technical_solution, _invention_description);
         // Trigger an event
-        emit addPatentDetails(patentCount, _patent_claims, _registereddate, _expdate, false, false);
+        emit addPatentDetails(patentCount, _patent_claims, _registered_date, _end_date, _license_details, _renewal_status, _patent_status);
     }
 
 }

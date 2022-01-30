@@ -29,6 +29,7 @@ class App extends Component {
 
   //fetch the accounts from Metamask
   async loadBlockchainData() {
+
     const web3 = window.web3
     // Load account
     const accounts = await web3.eth.getAccounts()
@@ -48,7 +49,8 @@ class App extends Component {
 
         this.setState({
           inventiondetails: [...this.state.inventiondetails, invention_detail],
-          patentdetails: [...this.state.patentdetails, patent_detail]
+          patentdetails: [...this.state.patentdetails, patent_detail],
+          dataarr: this.state.inventiondetails.map((item, i) => Object.assign({}, item, this.state.patentdetails[i]))
         })
       }
       this.setState({ loading: false })
@@ -62,21 +64,23 @@ class App extends Component {
     super(props)
     this.state = {
       account: '',
+      dataarr: [],
       patentCount: 0,
       inventiondetails: [],
       patentdetails: [],
       loading: true
     }
+
     this.registerPatent = this.registerPatent.bind(this)
 
   }
 
-  registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, patent_claims, invention_description, registereddate, expdate) {
+  registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, invention_description, patent_claims, registered_date, exp_date, license_details, renewal_status, patent_status) {
     this.setState({ loading: true })
-    this.state.patent.methods.registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, patent_claims, invention_description, registereddate, expdate).send({ from: this.state.account, gas: 4712388, gasPrice: 100000000000 })
-    .once('receipt', (receipt) => {
-      this.setState({ loading: false })
-    })
+    this.state.patent.methods.registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, invention_description, patent_claims, registered_date, exp_date, license_details, renewal_status, patent_status).send({ from: this.state.account, gas: 4712388, gasPrice: 100000000000 })
+      .once('receipt', (receipt) => {
+        this.setState({ loading: false })
+      })
   }
 
   render() {
@@ -85,13 +89,13 @@ class App extends Component {
         <Navbar account={this.state.account} />
         <div className="container-fluid mt-5">
           <div className="row">
-            <main role="main" className="col-lg-12 d-flex">
+            <main role="main" className="col-md-12">
               {this.state.loading
                 ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
-                : <Main 
-                inventiondetails={this.state.inventiondetails}
-                patentdetails={this.state.patentdetails}
-                registerPatent={this.registerPatent} />
+                : <Main
+                  patentdataarr={this.state.dataarr}
+                  patentcount={this.state.patentCount.toString()}
+                  registerPatent={this.registerPatent} />
               }
             </main>
           </div>
