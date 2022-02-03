@@ -8,13 +8,12 @@ class Main extends Component {
 
     async loadRegisteredPatents() {
         if (this.props.patentcount === '0') {
-           
+
             this.setState({
                 showResults: false
             });
         }
-        else
-        {
+        else {
             this.setState({
                 showResults: true
             });
@@ -23,6 +22,7 @@ class Main extends Component {
 
     state = {
         showResults: false
+
     };
 
     render() {
@@ -34,6 +34,8 @@ class Main extends Component {
             whitespace: 'nowrap',
         }
 
+        console.log(this.props.patentdataarr)
+
         return (
             <div id="content">
                 <div className="container">
@@ -41,24 +43,27 @@ class Main extends Component {
                         <div className="col-md-12 card" style={{ padding: '10px' }}>
                             <h4 className="text-center">Patent Application</h4>
                             <form onSubmit={(event) => {
+
                                 const current = new Date();
                                 const date = `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()}`;
                                 // const enddate = `${current.getDate()}/${current.getMonth() + 1}/${current.getFullYear()+20}`;
                                 event.preventDefault()
                                 const invention_title = this.inventionTitle.value
                                 const inventor_details = this.inventorDetails.value
-                                const patent_claims = this.patentClaims.value
                                 const technical_problem = this.technicalProblem.value
                                 const technical_solution = this.technicalSolution.value
                                 const technical_field = this.technicalField.value
                                 const invention_description = this.inventionDescription.value
+                                const USPTO = this.patentClaimUSPTO.checked
+                                const JPO = this.patentClaimJPO.checked
+                                const EPO = this.patentClaimJPO.checked
                                 const registered_date = date
                                 const end_date = "Pending"
                                 const license_details = "No"
                                 const renewal_status = "Pending"
                                 const patent_status = "Pending Approval"
 
-                                this.props.registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, patent_claims, invention_description, registered_date, end_date, license_details, renewal_status, patent_status)
+                                this.props.registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, invention_description, USPTO, JPO, EPO, registered_date, end_date, license_details, renewal_status, patent_status)
                             }}>
                                 <div className="row">
                                     <div className="col-md-6">
@@ -82,12 +87,26 @@ class Main extends Component {
                                         </div>
                                         <div className="form-group mr-sm-2">
                                             <label>Patent Claims <span style={{ color: 'red' }}>*</span></label>
-                                            <input
-                                                id="patentClaims"
-                                                type="text"
-                                                ref={(input) => { this.patentClaims = input }}
-                                                className="form-control"
-                                                required />
+                                            <div className="input-group">
+                                                <input
+                                                    id="patentClaimUSPTO"
+                                                    type="checkbox"
+                                                    ref={(input) => { this.patentClaimUSPTO = input }}
+                                                    className="form-control"
+                                                />
+                                                <input
+                                                    id="patentClaimJPO"
+                                                    type="checkbox"
+                                                    ref={(input) => { this.patentClaimJPO = input }}
+                                                    className="form-control"
+                                                />
+                                                <input
+                                                    id="patentClaimEPO"
+                                                    type="checkbox"
+                                                    ref={(input) => { this.patentClaimEPO = input }}
+                                                    className="form-control"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="col-md-6">
@@ -141,7 +160,7 @@ class Main extends Component {
                     </div>
                 </div>
 
-                <div className="container-fluid"  style={{ display: this.state.showResults ? "block" : "none", marginTop: '30px' }}>
+                <div className="container-fluid" style={{ display: this.state.showResults ? "block" : "none", marginTop: '30px' }}>
                     <div className="row">
                         <div className="col" id="registered_patents_div">
                             <h4 className="text-center">Registered Patents</h4>
@@ -156,9 +175,13 @@ class Main extends Component {
                                         <th>Technical Problem</th>
                                         <th>Technical Solution</th>
                                         <th>Invention Description</th>
-                                        <th>Patent Claims</th>
+                                        <th>USPTO</th>
+                                        <th>JPO</th>
+                                        <th>EPO</th>
                                         <th>Register Date</th>
                                         <th>Patent Status</th>
+                                        <th>Renewal Status</th>
+                                        <th>End Date</th>
                                     </tr>
                                 </thead>
                                 <tbody id="patentList">
@@ -172,10 +195,14 @@ class Main extends Component {
                                                 <td>{i.technical_field}</td>
                                                 <td>{i.technical_problem}</td>
                                                 <td>{i.technical_solution}</td>
-                                                <td>{i.patent_claims}</td>
                                                 <td>{i.invention_description}</td>
+                                                <td>{i.USPTO.toString()}</td>
+                                                <td>{i.JPO.toString()}</td>
+                                                <td>{i.EPO.toString()}</td>
                                                 <td>{i.registered_date}</td>
                                                 <td>{i.patent_status}</td>
+                                                <td>{i.renewal_status}</td>
+                                                <td>{i.end_date}</td>
                                             </tr>
                                         )
                                     })}

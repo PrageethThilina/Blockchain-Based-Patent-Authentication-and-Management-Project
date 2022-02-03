@@ -46,11 +46,13 @@ class App extends Component {
       for (var i = 1; i <= patentCount; i++) {
         const invention_detail = await patent.methods.inventiondetails(i).call()
         const patent_detail = await patent.methods.patentdetails(i).call()
+        const patent_claim = await patent.methods.patentclaims(i).call()
 
         this.setState({
           inventiondetails: [...this.state.inventiondetails, invention_detail],
           patentdetails: [...this.state.patentdetails, patent_detail],
-          dataarr: this.state.inventiondetails.map((item, i) => Object.assign({}, item, this.state.patentdetails[i]))
+          patentclaims: [...this.state.patentclaims, patent_claim],
+          dataarr: this.state.inventiondetails.map((item, i) => Object.assign({}, item, this.state.patentdetails[i], {}, item, this.state.patentclaims[i]))
         })
       }
       this.setState({ loading: false })
@@ -68,6 +70,7 @@ class App extends Component {
       patentCount: 0,
       inventiondetails: [],
       patentdetails: [],
+      patentclaims: [],
       loading: true
     }
 
@@ -75,9 +78,9 @@ class App extends Component {
 
   }
 
-  registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, invention_description, patent_claims, registered_date, exp_date, license_details, renewal_status, patent_status) {
+  registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, invention_description, USPTO, JPO, EPO, registered_date, exp_date, license_details, renewal_status, patent_status) {
     this.setState({ loading: true })
-    this.state.patent.methods.registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, invention_description, patent_claims, registered_date, exp_date, license_details, renewal_status, patent_status).send({ from: this.state.account, gas: 4712388, gasPrice: 100000000000 })
+    this.state.patent.methods.registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, invention_description, USPTO, JPO, EPO, registered_date, exp_date, license_details, renewal_status, patent_status).send({ from: this.state.account, gas: 4712388, gasPrice: 100000000000 })
       .once('receipt', (receipt) => {
         this.setState({ loading: false })
       })
