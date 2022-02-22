@@ -56,14 +56,15 @@ class Main extends Component {
                                 const invention_description = this.inventionDescription.value
                                 const USPTO = this.patentClaimUSPTO.checked
                                 const JPO = this.patentClaimJPO.checked
-                                const EPO = this.patentClaimJPO.checked
+                                const EPO = this.patentClaimEPO.checked
                                 const registered_date = date
                                 const end_date = "Pending"
                                 const license_details = "No"
                                 const renewal_status = "Pending"
                                 const patent_status = "Pending Approval"
 
-                                this.props.registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, invention_description, USPTO, JPO, EPO, registered_date, end_date, license_details, renewal_status, patent_status)
+                                this.props.registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, invention_description, registered_date, end_date, license_details, renewal_status, patent_status, USPTO, JPO, EPO)
+
                             }}>
                                 <div className="row">
                                     <div className="col-md-6">
@@ -180,8 +181,6 @@ class Main extends Component {
                                         <th>EPO</th>
                                         <th>Register Date</th>
                                         <th>Patent Status</th>
-                                        <th>Renewal Status</th>
-                                        <th>End Date</th>
                                     </tr>
                                 </thead>
                                 <tbody id="patentList">
@@ -201,8 +200,6 @@ class Main extends Component {
                                                 <td>{i.EPO.toString()}</td>
                                                 <td>{i.registered_date}</td>
                                                 <td>{i.patent_status}</td>
-                                                <td>{i.renewal_status}</td>
-                                                <td>{i.end_date}</td>
                                             </tr>
                                         )
                                     })}

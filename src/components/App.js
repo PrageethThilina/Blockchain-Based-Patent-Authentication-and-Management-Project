@@ -33,6 +33,7 @@ class App extends Component {
     const web3 = window.web3
     // Load account
     const accounts = await web3.eth.getAccounts()
+    console.log(accounts)
     //store the account to the React state object
     this.setState({ account: accounts[0] })
     const networkId = await web3.eth.net.getId()
@@ -46,13 +47,13 @@ class App extends Component {
       for (var i = 1; i <= patentCount; i++) {
         const invention_detail = await patent.methods.inventiondetails(i).call()
         const patent_detail = await patent.methods.patentdetails(i).call()
-        const patent_claim = await patent.methods.patentclaims(i).call()
+        const check_patent_claim = await patent.methods.checkpatentclaims(i).call()
 
         this.setState({
           inventiondetails: [...this.state.inventiondetails, invention_detail],
           patentdetails: [...this.state.patentdetails, patent_detail],
-          patentclaims: [...this.state.patentclaims, patent_claim],
-          dataarr: this.state.inventiondetails.map((item, i) => Object.assign({}, item, this.state.patentdetails[i], {}, item, this.state.patentclaims[i]))
+          checkpatentclaims: [...this.state.checkpatentclaims, check_patent_claim],
+          dataarr: this.state.inventiondetails.map((item, i) => Object.assign({}, item, this.state.patentdetails[i], {}, item, this.state.checkpatentclaims[i]))
         })
       }
       this.setState({ loading: false })
@@ -70,7 +71,7 @@ class App extends Component {
       patentCount: 0,
       inventiondetails: [],
       patentdetails: [],
-      patentclaims: [],
+      checkpatentclaims: [],
       loading: true
     }
 
@@ -78,9 +79,9 @@ class App extends Component {
 
   }
 
-  registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, invention_description, USPTO, JPO, EPO, registered_date, exp_date, license_details, renewal_status, patent_status) {
+  registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, invention_description, registered_date, end_date, license_details, renewal_status, patent_status, USPTO, JPO, EPO) {
     this.setState({ loading: true })
-    this.state.patent.methods.registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, invention_description, USPTO, JPO, EPO, registered_date, exp_date, license_details, renewal_status, patent_status).send({ from: this.state.account, gas: 4712388, gasPrice: 100000000000 })
+    this.state.patent.methods.registerPatent(invention_title, inventor_details, technical_field, technical_problem, technical_solution, invention_description, registered_date, end_date, license_details, renewal_status, patent_status, USPTO, JPO, EPO).send({ from: this.state.account, gas: 4712388, gasPrice: 100000000000 })
       .once('receipt', (receipt) => {
         this.setState({ loading: false })
       })
