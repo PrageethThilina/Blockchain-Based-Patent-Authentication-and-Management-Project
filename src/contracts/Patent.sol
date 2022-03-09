@@ -157,31 +157,51 @@ contract Patent {
         emit addCheckPatentClaims(_USPTO, _JPO, _EPO, _USPTO_Status, _JPO_Status, _EPO_Status);
     }
 
-    // function acceptPatentApplicationByUSPTO(uint patent_id) {
-    //     // Fetch the Invention Details
-    //     InventionDetails memory inventiondetail = inventiondetails[patent_id];
-    //     // Fetch the Patent Details
-    //     PatentDetails memory patentdetail = patentdetails[patent_id];
-    //     // Fetch the Patent Details
-    //     PatentClaims memory patentclaim = patentclaims[patent_id];
-    //     // Fetch the patent owner
-    //     address _inventor = inventiondetail.inventor;
-    //     // Make sure the patent has a valid id
-    //     require(inventiondetail.patent_id > 0 && inventiondetail.patent_id <= patentCount);
-    //     // Require that the product has not been accepted already
-    //     require(!patentclaim.USPTO);
-    //     // Require that the buyer is not the seller
-    //     require(_inventor != msg.sender);
-    //     // Transfer ownership to the buyer
-    //     inventiondetail.owner = msg.sender;
-    //     // Mark as purchased
-    //     inventiondetail.purchased = true;
-    //     // Update the product
-    //     products[_id] = inventiondetail;
-    //     // Pay the seller by sending them Ether
-    //     address(_inventor).transfer(msg.value);
-    //     // Trigger an event
-    //     emit ProductPurchased(productCount, inventiondetail.name, inventiondetail.price, msg.sender, true);
-    // }
+    function acceptPatentApplicationByUSPTO(uint patent_id) public {
+        // Fetch the Invention Details
+        InventionDetails memory inventiondetail = inventiondetails[patent_id];
+        // Fetch the Patent Details
+        checkPatentClaims memory checkpatentclaim = checkpatentclaims[patent_id];
+        // Fetch the patent owner
+        address _inventor = inventiondetail.inventor;
+        // Make sure the patent has a valid id
+        require(inventiondetail.patent_id > 0 && inventiondetail.patent_id <= patentCount);
+        // Require that the patent has not been accepted already
+        require(checkpatentclaim.USPTO);
+        // Require that the patent examiner is not the inventor
+        require(_inventor != msg.sender);
+        // Mark as approved by USPTO
+        checkpatentclaim.USPTO_Approval = "Approved";
+        // Update the product
+        checkpatentclaims[patent_id] = checkpatentclaim;
+        // Trigger an event
+        emit addCheckPatentClaims(checkpatentclaim.USPTO, checkpatentclaim.JPO, checkpatentclaim.EPO, checkpatentclaim.USPTO_Approval, checkpatentclaim.JPO_Approval, checkpatentclaim.EPO_Approval);
+    }
+    
+    function acceptPatentApplicationByJPO(uint patent_id, string memory _end_date) public {
+        // Fetch the Invention Details
+        InventionDetails memory inventiondetail = inventiondetails[patent_id];
+        // Fetch the Patent Details
+        PatentDetails memory patentdetail = patentdetails[patent_id];
+        // Fetch the Patent Details
+        checkPatentClaims memory checkpatentclaim = checkpatentclaims[patent_id];
+        // Fetch the patent owner
+        address _inventor = inventiondetail.inventor;
+        // Make sure the patent has a valid id
+        require(inventiondetail.patent_id > 0 && inventiondetail.patent_id <= patentCount);
+        // Require that the patent has not been accepted already
+        require(checkpatentclaim.JPO);
+        // Require that the patent examiner is not the inventor
+        require(_inventor != msg.sender);
 
+        // Mark as approved by USPTO
+        checkpatentclaim.JPO_Approval = "Approved";
+        patentdetail.end_date = _end_date;
+        patentdetail.patent_status = "Active";
+
+        // Update the product
+        checkpatentclaims[patent_id] = checkpatentclaim;
+        // Trigger an event
+        emit addCheckPatentClaims(checkpatentclaim.USPTO, checkpatentclaim.JPO, checkpatentclaim.EPO, checkpatentclaim.USPTO_Approval, checkpatentclaim.JPO_Approval, checkpatentclaim.EPO_Approval);
+    }
 }

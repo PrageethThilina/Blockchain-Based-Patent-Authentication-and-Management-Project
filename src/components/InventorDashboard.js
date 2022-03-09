@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class Main extends Component {
+class InventorDashboard extends Component {
 
     async componentWillMount() {
         await this.loadRegisteredPatents()
@@ -89,18 +89,21 @@ class Main extends Component {
                                         <div className="form-group mr-sm-2">
                                             <label>Patent Claims <span style={{ color: 'red' }}>*</span></label>
                                             <div className="input-group">
+                                                <label>USPTO</label>
                                                 <input
                                                     id="patentClaimUSPTO"
                                                     type="checkbox"
                                                     ref={(input) => { this.patentClaimUSPTO = input }}
                                                     className="form-control"
                                                 />
+                                                <label>JPO</label>
                                                 <input
                                                     id="patentClaimJPO"
                                                     type="checkbox"
                                                     ref={(input) => { this.patentClaimJPO = input }}
                                                     className="form-control"
                                                 />
+                                                <label>EPO</label>
                                                 <input
                                                     id="patentClaimEPO"
                                                     type="checkbox"
@@ -176,10 +179,10 @@ class Main extends Component {
                                         <th>Technical Problem</th>
                                         <th>Technical Solution</th>
                                         <th>Invention Description</th>
-                                        <th>USPTO</th>
-                                        <th>JPO</th>
-                                        <th>EPO</th>
-                                        <th>Register Date</th>
+                                        <th>USPTO Approval</th>
+                                        <th>JPO Approval</th>
+                                        <th>Registered Date</th>
+                                        <th>End Date</th>
                                         <th>Patent Status</th>
                                     </tr>
                                 </thead>
@@ -195,10 +198,10 @@ class Main extends Component {
                                                 <td>{i.technical_problem}</td>
                                                 <td>{i.technical_solution}</td>
                                                 <td>{i.invention_description}</td>
-                                                <td>{i.USPTO.toString()}</td>
-                                                <td>{i.JPO.toString()}</td>
-                                                <td>{i.EPO.toString()}</td>
+                                                <td>{i.USPTO_Approval}</td>
+                                                <td>{i.JPO_Approval}</td>
                                                 <td>{i.registered_date}</td>
+                                                <td>{i.end_date}</td>
                                                 <td>{i.patent_status}</td>
                                             </tr>
                                         )
@@ -213,4 +216,4 @@ class Main extends Component {
     }
 }
 
-export default Main;
+export default InventorDashboard;

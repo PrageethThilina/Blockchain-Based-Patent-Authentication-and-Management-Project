@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Web3 from 'web3';
-import Navbar from './Navbar';
-import Main from './Main';
+import InventorNavbar from './InventorNavbar';
+import InventorDashboard from './InventorDashboard';
 import './App.css';
 import Patent from '../abis/Patent.json';
+import UsptoDashboard from './UsptoDashboard';
+import JpoDashboard from './JpoDashboard';
 
 class App extends Component {
 
@@ -76,6 +79,7 @@ class App extends Component {
     }
 
     this.registerPatent = this.registerPatent.bind(this)
+    this.acceptPatentApplicationByUSPTO = this.acceptPatentApplicationByUSPTO.bind(this)
 
   }
 
@@ -87,23 +91,38 @@ class App extends Component {
       })
   }
 
+  acceptPatentApplicationByUSPTO(patent_id) {
+    this.setState({ loading: true })
+    this.state.patent.methods.acceptPatentApplicationByUSPTO(patent_id).send({ from: this.state.account, gas: 5000000, gasPrice: 200000000000 })
+      .once('receipt', (receipt) => {
+        this.setState({ loading: false })
+      })
+  }
+
   render() {
     return (
       <div>
-        <Navbar account={this.state.account} />
+        <InventorNavbar account={this.state.account} />
         <div className="container-fluid mt-5">
           <div className="row">
             <main role="main" className="col-md-12">
               {this.state.loading
                 ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
-                : <Main
+                : <InventorDashboard
                   patentdataarr={this.state.dataarr}
                   patentcount={this.state.patentCount.toString()}
-                  registerPatent={this.registerPatent} />
+                  registerPatent={this.registerPatent}
+                  acceptPatentApplicationByUSPTO={this.acceptPatentApplicationByUSPTO} />
               }
             </main>
           </div>
         </div>
+        <Router>
+          <Routes>
+            <Route exact path="/UsptoDashboard" element={<UsptoDashboard />} />
+            <Route exact path="/JpoDashboard" element={<JpoDashboard />} />
+          </Routes>
+        </Router>
       </div>
     );
   }
