@@ -9,6 +9,10 @@ contract Patent {
     // keep track of how many patents exist in the smart contract
     uint public patentCount = 0;
 
+
+    // create and map to store this invention data on the blockchain, use an id as a key, and the value will be a Invention struct
+    mapping(uint => InventionDetails) public inventiondetails;
+
     // Invention Details data structure(stores all the attributes of a Invention)
     struct InventionDetails{
         uint patent_id;
@@ -21,8 +25,9 @@ contract Patent {
         string invention_description;
     }
 
-    // create and map to store this invention data on the blockchain, use an id as a key, and the value will be a Invention struct
-    mapping(uint => InventionDetails) public inventiondetails;
+
+    // create and map to store this patent data on the blockchain, use an id as a key, and the value will be a Patent Details struct
+    mapping(uint => PatentDetails) public patentdetails;
 
     // Patent Details data structure(stores all the attributes of a Patent details)
     struct PatentDetails{
@@ -34,8 +39,8 @@ contract Patent {
         string patent_status;
     }
 
-    // create and map to store this patent data on the blockchain, use an id as a key, and the value will be a Patent Details struct
-    mapping(uint => PatentDetails) public patentdetails;
+    // create and map to store this checking patent claims data on the blockchain, use an id as a key, and the value will be a Check Patent claims struct
+    mapping(uint => checkPatentClaims) public checkpatentclaims;
 
     // Check Patent Claims data structure(stores all the checking Patent claims)
     struct checkPatentClaims{
@@ -49,7 +54,7 @@ contract Patent {
     }
 
     // create and map to store this checking patent claims data on the blockchain, use an id as a key, and the value will be a Check Patent claims struct
-    mapping(uint => checkPatentClaims) public checkpatentclaims;
+    mapping(uint => transferOwnershipDetails) public transferownershipdetails;
 
     // Check Patent Claims data structure(stores all the checking Patent claims)
     struct transferOwnershipDetails{
@@ -58,9 +63,6 @@ contract Patent {
         string new_owner;
         string new_owner_details;
     }
-
-    // create and map to store this checking patent claims data on the blockchain, use an id as a key, and the value will be a Check Patent claims struct
-    mapping(uint => transferOwnershipDetails) public transferownershipdetails;
 
     // Event after adding invention details
     event addInventionDetails(
