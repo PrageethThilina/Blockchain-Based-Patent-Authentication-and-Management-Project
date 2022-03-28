@@ -53,44 +53,34 @@ class InventorDashboard extends Component {
                     const pending_invention_detail = await patent.methods.inventiondetails(i).call()
                     const pending_patent_detail = await patent.methods.patentdetails(i).call()
                     const pending_check_patent_claim = await patent.methods.checkpatentclaims(i).call()
+                    const pending_transfer_ownership_detail = await patent.methods.transferownershipdetails(i).call()
 
-                    if (this.state.account === "0xf410d0559Dc4ACb05Bb2Fc691a560B5a1e86e588") {
+                    if (this.state.account === pending_transfer_ownership_detail.owner) {
                         if (pending_patent_detail.patent_status === "Pending Approval") {
                             this.setState({
                                 pending_inventiondetails: [...this.state.pending_inventiondetails, pending_invention_detail],
                                 pending_patentdetails: [...this.state.pending_patentdetails, pending_patent_detail],
                                 pending_checkpatentclaims: [...this.state.pending_checkpatentclaims, pending_check_patent_claim],
+                                pending_transferownershipdetails: [...this.state.pending_checkpatentclaims, pending_transfer_ownership_detail],
                             })
-                            if (this.state.pendingpatentdata.length === 0) {
-                                this.setState({
-                                    pendingpatentdata: this.state.pending_inventiondetails.map((item, i) => Object.assign({}, item, this.state.pending_patentdetails[i], {}, item, this.state.pending_checkpatentclaims[i])),
-                                    showPendingApprovalPatents: false
-                                });
-                            }
-                            else {
-                                this.setState({
-                                    pendingpatentdata: this.state.pending_inventiondetails.map((item, i) => Object.assign({}, item, this.state.pending_patentdetails[i], {}, item, this.state.pending_checkpatentclaims[i])),
-                                    showPendingApprovalPatents: true
-                                });
-                            }
-                        }
-                        else {
                             this.setState({
-                                pendingpatentdata: this.state.pending_inventiondetails.map((item, i) => Object.assign({}, item, this.state.pending_patentdetails[i], {}, item, this.state.pending_checkpatentclaims[i])),
-                                showPendingApprovalPatents: false
-                            });
+                                pendingpatentdata: this.state.pending_inventiondetails.map((item, i) => Object.assign({}, item, this.state.pending_patentdetails[i], {}, item, this.state.pending_checkpatentclaims[i], {}, item, this.state.pending_transferownershipdetails[i])),
+                                showPendingApprovalPatents: true
+                            })
                         }
+                    }
+                    if (this.state.pendingpatentdata.length === 0) {
+                        this.setState({
+                            showPendingApprovalPatents: false
+                        });
                     }
                     else {
                         this.setState({
-                            pendingpatentdata: this.state.pending_inventiondetails.map((item, i) => Object.assign({}, item, this.state.pending_patentdetails[i], {}, item, this.state.pending_checkpatentclaims[i])),
-                            showPendingApprovalPatents: false
+                            showPendingApprovalPatents: true
                         });
                     }
                 }
             }
-            console.log(this.state.pendingpatentdata)
-            console.log(this.state.patentCount.toString())
             this.setState({ loading: false })
         } else {
             window.alert('Patent contract not deployed to detected network.')
@@ -125,7 +115,7 @@ class InventorDashboard extends Component {
                     const approved_check_patent_claim = await patent.methods.checkpatentclaims(i).call()
                     const approved_transfer_ownership_detail = await patent.methods.transferownershipdetails(i).call()
 
-                    if (this.state.account === "0xf410d0559Dc4ACb05Bb2Fc691a560B5a1e86e588") {
+                    if (this.state.account === approved_transfer_ownership_detail.owner) {
                         if (approved_patent_detail.patent_status === "Active") {
                             this.setState({
                                 approved_inventiondetails: [...this.state.approved_inventiondetails, approved_invention_detail],
@@ -133,38 +123,24 @@ class InventorDashboard extends Component {
                                 approved_checkpatentclaims: [...this.state.approved_checkpatentclaims, approved_check_patent_claim],
                                 approved_transferownershipdetails: [...this.state.approved_transferownershipdetails, approved_transfer_ownership_detail],
                             })
-                            console.log(approved_patent_detail.patent_status)
-
-                            if (this.state.myapprovedpatentdata.length === 0) {
-                                this.setState({
-                                    myapprovedpatentdata: this.state.approved_inventiondetails.map((item, i) => Object.assign({}, item, this.state.approved_patentdetails[i], {}, item, this.state.approved_checkpatentclaims[i], {}, item, this.state.approved_transferownershipdetails[i])),
-                                    showMyApprovedPatents: false
-                                });
-                            }
-                            else {
-                                this.setState({
-                                    myapprovedpatentdata: this.state.approved_inventiondetails.map((item, i) => Object.assign({}, item, this.state.approved_patentdetails[i], {}, item, this.state.approved_checkpatentclaims[i], {}, item, this.state.approved_transferownershipdetails[i])),
-                                    showMyApprovedPatents: true
-                                });
-                            }
-                        }
-                        else {
                             this.setState({
                                 myapprovedpatentdata: this.state.approved_inventiondetails.map((item, i) => Object.assign({}, item, this.state.approved_patentdetails[i], {}, item, this.state.approved_checkpatentclaims[i], {}, item, this.state.approved_transferownershipdetails[i])),
-                                showMyApprovedPatents: false
-                            });
+                                showMyApprovedPatents: true
+                            })
                         }
+                    }
+                    if (this.state.myapprovedpatentdata.length === 0) {
+                        this.setState({
+                            showMyApprovedPatents: false
+                        });
                     }
                     else {
                         this.setState({
-                            myapprovedpatentdata: this.state.approved_inventiondetails.map((item, i) => Object.assign({}, item, this.state.approved_patentdetails[i], {}, item, this.state.approved_checkpatentclaims[i], {}, item, this.state.approved_transferownershipdetails[i])),
-                            showMyApprovedPatents: false
+                            showMyApprovedPatents: true
                         });
                     }
                 }
             }
-
-            console.log(this.state.myapprovedpatentdata.length)
             this.setState({ loading: false })
         } else {
             window.alert('Patent contract not deployed to detected network.')
@@ -181,6 +157,7 @@ class InventorDashboard extends Component {
             pending_inventiondetails: [],
             pending_patentdetails: [],
             pending_checkpatentclaims: [],
+            pending_transferownershipdetails: [],
             myapprovedpatentdata: [],
             approved_inventiondetails: [],
             approved_patentdetails: [],
@@ -331,6 +308,7 @@ class InventorDashboard extends Component {
                                                     ref={(input) => { this.technicalField = input }}
                                                     className="form-control"
                                                     required >
+                                                    <option defaultValue>Select the Technical Field</option>
                                                     <option value="Process Automation">Process Automation</option>
                                                     <option value="Aeronautics">Aeronautics</option>
                                                     <option value="Chemistry">Chemistry</option>
@@ -379,6 +357,8 @@ class InventorDashboard extends Component {
                                                         <th>Invention Title</th>
                                                         <th>Inventor Details</th>
                                                         <th>Inventor</th>
+                                                        <th>Owner</th>
+                                                        <th>Owner Details</th>
                                                         <th>Technical Field</th>
                                                         <th>Technical Problem</th>
                                                         <th>Technical Solution</th>
@@ -390,6 +370,7 @@ class InventorDashboard extends Component {
                                                         <th>License Details</th>
                                                         <th>Renewal Details</th>
                                                         <th>Patent Status</th>
+                                                        <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="patentList">
@@ -400,6 +381,8 @@ class InventorDashboard extends Component {
                                                                 <td>{i.invention_title}</td>
                                                                 <td>{i.inventor_details}</td>
                                                                 <td>{i.inventor}</td>
+                                                                <td>{i.owner}</td>
+                                                                <td>{i.owner_details}</td>
                                                                 <td>{i.technical_field}</td>
                                                                 <td>{i.technical_problem}</td>
                                                                 <td>{i.technical_solution}</td>
@@ -411,6 +394,17 @@ class InventorDashboard extends Component {
                                                                 <td>{i.license_details}</td>
                                                                 <td>{i.renewal_status}</td>
                                                                 <td style={{ color: 'green', fontWeight: 'bold' }}>{i.patent_status}</td>
+                                                                <td>
+                                                                    {i.USPTO
+                                                                        ? <button
+                                                                            name={i.patent_id}
+                                                                            className="btn btn-success"
+                                                                        >
+                                                                            Edit Details
+                                                                        </button>
+                                                                        : null
+                                                                    }
+                                                                </td>
                                                             </tr>
                                                         )
                                                     })}
@@ -438,6 +432,8 @@ class InventorDashboard extends Component {
                                                         <th>Invention Title</th>
                                                         <th>Inventor Details</th>
                                                         <th>Inventor</th>
+                                                        <th>Owner</th>
+                                                        <th>Owner Details</th>
                                                         <th>Technical Field</th>
                                                         <th>Technical Problem</th>
                                                         <th>Technical Solution</th>
@@ -460,6 +456,8 @@ class InventorDashboard extends Component {
                                                                 <td>{i.invention_title}</td>
                                                                 <td>{i.inventor_details}</td>
                                                                 <td>{i.inventor}</td>
+                                                                <td>{i.owner}</td>
+                                                                <td>{i.owner_details}</td>
                                                                 <td>{i.technical_field}</td>
                                                                 <td>{i.technical_problem}</td>
                                                                 <td>{i.technical_solution}</td>

@@ -10,6 +10,7 @@ class JpoDashboard extends Component {
     await this.loadWeb3()
     await this.loadPendingPatentData()
     await this.loadApprovedPatentData()
+    await this.loadRelatedPatentData()
   }
 
   //function that will create the connection
@@ -58,6 +59,7 @@ class JpoDashboard extends Component {
           const pending_invention_detail = await patent.methods.inventiondetails(i).call()
           const pending_patent_detail = await patent.methods.patentdetails(i).call()
           const pending_check_patent_claim = await patent.methods.checkpatentclaims(i).call()
+          const pending_transfer_ownership_detail = await patent.methods.transferownershipdetails(i).call()
 
           if (this.state.account === "0xe9782Bb57c404CBD6b11742b42d4D78fe630999B") {
             if (pending_check_patent_claim.JPO_Approval === "Pending") {
@@ -65,40 +67,29 @@ class JpoDashboard extends Component {
                 pending_inventiondetails: [...this.state.pending_inventiondetails, pending_invention_detail],
                 pending_patentdetails: [...this.state.pending_patentdetails, pending_patent_detail],
                 pending_checkpatentclaims: [...this.state.pending_checkpatentclaims, pending_check_patent_claim],
+                pending_transferownershipdetails: [...this.state.pending_transferownershipdetails, pending_transfer_ownership_detail],
               })
-              if (this.state.pendingpatentdata.length === 0) {
-                this.setState({
-                  pendingpatentdata: this.state.pending_inventiondetails.map((item, i) => Object.assign({}, item, this.state.pending_patentdetails[i], {}, item, this.state.pending_checkpatentclaims[i])),
-                  showPendingApprovalPatents: false,
-                  emptyPendingResults: true
-                });
-              }
-              else {
-                this.setState({
-                  pendingpatentdata: this.state.pending_inventiondetails.map((item, i) => Object.assign({}, item, this.state.pending_patentdetails[i], {}, item, this.state.pending_checkpatentclaims[i])),
-                  showPendingApprovalPatents: true,
-                  emptyPendingResults: false
-                });
-              }
-            }
-            else {
               this.setState({
-                pendingpatentdata: this.state.pending_inventiondetails.map((item, i) => Object.assign({}, item, this.state.pending_patentdetails[i], {}, item, this.state.pending_checkpatentclaims[i])),
-                showPendingApprovalPatents: false,
-                emptyPendingResults: true
+                pendingpatentdata: this.state.pending_inventiondetails.map((item, i) => Object.assign({}, item, this.state.pending_patentdetails[i], {}, item, this.state.pending_checkpatentclaims[i], {}, item, this.state.pending_transferownershipdetails[i])),
+                showPendingApprovalPatents: true,
+                emptyPendingResults: false
               });
             }
           }
-          else {
+          if (this.state.pendingpatentdata.length === 0) {
             this.setState({
-              pendingpatentdata: this.state.pending_inventiondetails.map((item, i) => Object.assign({}, item, this.state.pending_patentdetails[i], {}, item, this.state.pending_checkpatentclaims[i])),
               showPendingApprovalPatents: false,
               emptyPendingResults: true
             });
           }
+          else {
+            this.setState({
+              showPendingApprovalPatents: true,
+              emptyPendingResults: false
+            });
+          }
         }
       }
-      console.log(this.state.pendingpatentdata)
       this.setState({ loading: false })
     } else {
       window.alert('Patent contract not deployed to detected network.')
@@ -142,39 +133,92 @@ class JpoDashboard extends Component {
                 approved_checkpatentclaims: [...this.state.approved_checkpatentclaims, approved_check_patent_claim],
                 approved_transferownershipdetails: [...this.state.approved_transferownershipdetails, approved_transfer_ownership_detail],
               })
-              if (this.state.approvedpatentdata.length === 0) {
-                this.setState({
-                  approvedpatentdata: this.state.approved_inventiondetails.map((item, i) => Object.assign({}, item, this.state.approved_patentdetails[i], {}, item, this.state.approved_checkpatentclaims[i], {}, item, this.state.approved_transferownershipdetails[i])),
-                  showApprovedPatents: false,
-                  emptyApprovedResults: true
-                });
-              }
-              else {
-                this.setState({
-                  approvedpatentdata: this.state.approved_inventiondetails.map((item, i) => Object.assign({}, item, this.state.approved_patentdetails[i], {}, item, this.state.approved_checkpatentclaims[i], {}, item, this.state.approved_transferownershipdetails[i])),
-                  showApprovedPatents: true,
-                  emptyApprovedResults: false
-                });
-              }
-            }
-            else {
               this.setState({
                 approvedpatentdata: this.state.approved_inventiondetails.map((item, i) => Object.assign({}, item, this.state.approved_patentdetails[i], {}, item, this.state.approved_checkpatentclaims[i], {}, item, this.state.approved_transferownershipdetails[i])),
-                showApprovedPatents: false,
-                emptyApprovedResults: true
+                showApprovedPatents: true,
+                emptyApprovedResults: false
               });
             }
           }
-          else {
+          if (this.state.approvedpatentdata.length === 0) {
             this.setState({
-              approvedpatentdata: this.state.approved_inventiondetails.map((item, i) => Object.assign({}, item, this.state.approved_patentdetails[i], {}, item, this.state.approved_checkpatentclaims[i], {}, item, this.state.approved_transferownershipdetails[i])),
               showApprovedPatents: false,
               emptyApprovedResults: true
             });
           }
+          else {
+            this.setState({
+              showApprovedPatents: true,
+              emptyApprovedResults: false
+            });
+          }
         }
       }
-      console.log(this.state.approvedpatentdata)
+      this.setState({ loading: false })
+    } else {
+      window.alert('Patent contract not deployed to detected network.')
+    }
+  }
+
+  //fetch ISA Report Details
+  async loadRelatedPatentData() {
+
+    const web3 = window.web3
+    // Load account
+    const accounts = await web3.eth.getAccounts()
+    //store the account to the React state object
+    this.setState({ account: accounts[0] })
+    const networkId = await web3.eth.net.getId()
+    const networkData = Patent.networks[networkId]
+    if (networkData) {
+      const patent = web3.eth.Contract(Patent.abi, networkData.address)
+      this.setState({ patent })
+      const patentCount = await patent.methods.patentCount().call()
+      this.setState({ patentCount })
+      // Load patents
+      if (patentCount.toString() === '0') {
+        this.setState({
+          showrelatedPatents: false,
+          emptyrelatedResults: true
+        });
+      }
+      else {
+        for (var i = 1; i <= patentCount; i++) {
+          const related_invention_detail = await patent.methods.inventiondetails(i).call()
+          const related_patent_detail = await patent.methods.patentdetails(i).call()
+          const related_check_patent_claim = await patent.methods.checkpatentclaims(i).call()
+          const related_transfer_ownership_detail = await patent.methods.transferownershipdetails(i).call()
+
+          if (related_patent_detail.patent_status === "Active") {
+            if (related_invention_detail.technical_field === "Process Automation") {
+              console.log("A")
+              this.setState({
+                related_inventiondetails: [...this.state.related_inventiondetails, related_invention_detail],
+                related_patentdetails: [...this.state.related_patentdetails, related_patent_detail],
+                related_checkpatentclaims: [...this.state.related_checkpatentclaims, related_check_patent_claim],
+                related_transferownershipdetails: [...this.state.related_transferownershipdetails, related_transfer_ownership_detail],
+              })
+              this.setState({
+                relatedpatentdata: this.state.related_inventiondetails.map((item, i) => Object.assign({}, item, this.state.related_patentdetails[i], {}, item, this.state.related_checkpatentclaims[i], {}, item, this.state.related_transferownershipdetails[i])),
+                showrelatedPatents: true,
+                emptyrelatedResults: false
+              });
+            }
+          }
+          if (this.state.relatedpatentdata.length === 0) {
+            this.setState({
+              showrelatedPatents: false,
+              emptyrelatedResults: true
+            });
+          }
+          else {
+            this.setState({
+              showrelatedPatents: true,
+              emptyrelatedResults: false
+            });
+          }
+        }
+      }
       this.setState({ loading: false })
     } else {
       window.alert('Patent contract not deployed to detected network.')
@@ -192,11 +236,18 @@ class JpoDashboard extends Component {
       pending_inventiondetails: [],
       pending_patentdetails: [],
       pending_checkpatentclaims: [],
+      pending_transferownershipdetails: [],
       approvedpatentdata: [],
       approved_inventiondetails: [],
       approved_patentdetails: [],
       approved_checkpatentclaims: [],
       approved_transferownershipdetails: [],
+      relatedpatentdata: [],
+      related_inventiondetails: [],
+      related_patentdetails: [],
+      related_checkpatentclaims: [],
+      related_transferownershipdetails: [],
+      showHide: false,
       loading: true
     }
 
@@ -212,6 +263,11 @@ class JpoDashboard extends Component {
       })
   }
 
+  handleModalShowHide(technical_field) {
+    this.setState({ showHide: !this.state.showHide })
+    this.setState({ technical_field })
+  }
+
   render() {
 
     const tblStyle = {
@@ -225,7 +281,7 @@ class JpoDashboard extends Component {
       <div>
         <JpoNavbar account={this.state.account} />
         <div id="content" style={{ marginTop: '60px' }}>
-          <main role="main">
+          <div id="JPOPendingPatents">
             {this.state.loading
               ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
               : <div>
@@ -241,6 +297,8 @@ class JpoDashboard extends Component {
                             <th>Invention Title</th>
                             <th>Inventor Details</th>
                             <th>Inventor</th>
+                            <th>Owner</th>
+                            <th>Owner Details</th>
                             <th>Technical Field</th>
                             <th>Technical Problem</th>
                             <th>Technical Solution</th>
@@ -263,6 +321,8 @@ class JpoDashboard extends Component {
                                 <td>{i.invention_title}</td>
                                 <td>{i.inventor_details}</td>
                                 <td>{i.inventor}</td>
+                                <td>{i.owner}</td>
+                                <td>{i.owner_details}</td>
                                 <td>{i.technical_field}</td>
                                 <td>{i.technical_problem}</td>
                                 <td>{i.technical_solution}</td>
@@ -288,6 +348,38 @@ class JpoDashboard extends Component {
                                     </button>
                                     : null
                                   }
+                                  {/* <button
+                                    name={i.patent_id}
+                                    className="btn btn-success"
+                                    style={{ width: '120px', marginBottom: '5px' }}
+                                    onClick={(event) => {
+                                      this.acceptPatentApplicationByUSPTO(event.target.name)
+                                    }}
+                                  >
+                                    Accept
+                                  </button>
+                                  <button
+                                    name={i.patent_id}
+                                    className="btn btn-primary"
+                                    style={{ width: '120px', marginBottom: '5px' }}
+
+                                    onClick={(event) => {
+                                      this.acceptPatentApplicationByUSPTO(event.target.name)
+                                    }}
+                                  >
+                                    Add Remarks
+                                  </button>
+                                  <button
+                                    name={i.patent_id}
+                                    className="btn btn-danger"
+                                    style={{ width: '120px', marginBottom: '5px' }}
+
+                                    onClick={(event) => {
+                                      this.acceptPatentApplicationByUSPTO(event.target.name)
+                                    }}
+                                  >
+                                    Reject
+                                  </button> */}
                                 </td>
                               </tr>
                             )
@@ -299,11 +391,11 @@ class JpoDashboard extends Component {
                 </div>
               </div>
             }
-          </main>
+          </div>
         </div>
 
         <div id="content" style={{ marginTop: '60px' }}>
-          <main role="main">
+          <div id="JPOPendingPatents">
             {this.state.loading
               ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
               : <div>
@@ -319,6 +411,8 @@ class JpoDashboard extends Component {
                             <th>Invention Title</th>
                             <th>Inventor Details</th>
                             <th>Inventor</th>
+                            <th>Owner</th>
+                            <th>Owner Details</th>
                             <th>Technical Field</th>
                             <th>Technical Problem</th>
                             <th>Technical Solution</th>
@@ -340,6 +434,8 @@ class JpoDashboard extends Component {
                                 <td>{i.invention_title}</td>
                                 <td>{i.inventor_details}</td>
                                 <td>{i.inventor}</td>
+                                <td>{i.owner}</td>
+                                <td>{i.owner_details}</td>
                                 <td>{i.technical_field}</td>
                                 <td>{i.technical_problem}</td>
                                 <td>{i.technical_solution}</td>
@@ -361,7 +457,7 @@ class JpoDashboard extends Component {
                 </div>
               </div>
             }
-          </main>
+          </div>
         </div>
       </div>
     );
