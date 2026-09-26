@@ -175,9 +175,3 @@ npm run dev
 ```
 
 ---
-
-## 👤 Author
-**Prageeth Thilina Gunasekara**  
-*Senior Software & Blockchain Engineer*  
-- **Email:** prageeththilina8@gmail.com  
-- **Specializations:** Distributed Systems, Smart Contract Architecture, Full-Stack Web3, Cloud Security
